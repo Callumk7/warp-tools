@@ -44,6 +44,9 @@ export const clients = pgTable('clients', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
+export type Client = typeof clients.$inferSelect;
+export type ClientInsert = typeof clients.$inferInsert;
+
 // Projects
 export const projects = pgTable('projects', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -61,6 +64,7 @@ export const projects = pgTable('projects', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
+
 
 // Invoices
 export const invoices = pgTable('invoices', {

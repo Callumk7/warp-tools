@@ -14,6 +14,7 @@
     "db:seed": "tsx scripts/seed.ts"
   },
   "dependencies": {
+    "@nuxt/icon": "1.13.0",
     "@nuxt/ui": "^3.1.2",
     "bcrypt": "^6.0.0",
     "dotenv": "^16.5.0",
@@ -23,12 +24,14 @@
     "tailwindcss": "^4.1.7",
     "uuid": "^11.1.0",
     "vue": "^3.5.13",
-    "vue-router": "^4.5.1"
+    "vue-router": "^4.5.1",
+    "zod": "^3.24.4"
   },
   "packageManager": "pnpm@8.10.2+sha1.e0b68270e89c817ff88b7be62466a2128c53af02",
   "devDependencies": {
     "@types/pg": "^8.15.2",
     "drizzle-kit": "^0.31.1",
+    "prettier": "^3.5.3",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3"
   }

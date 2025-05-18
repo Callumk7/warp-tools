@@ -1,8 +1,3 @@
-<script setup lang="ts">
-const {data} = await useFetch('/api/dummy');
-</script>
-
 <template>
-    <Navigation />
-    <Table />
+    <h2>Index page</h2>
 </template>
