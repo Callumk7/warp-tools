@@ -3,6 +3,13 @@ import { clients } from '../../../db/schema';
 import { eq } from 'drizzle-orm';
 
 export default defineEventHandler(async (event) => {
+	if (!event.context.params || !event.context.params.id) {
+		throw createError({
+			statusCode: 400,
+			message: 'Client ID is required'
+		});
+	}
+
   const id = event.context.params.id;
   
   try {
