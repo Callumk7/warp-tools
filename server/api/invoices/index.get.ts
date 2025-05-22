@@ -1,4 +1,4 @@
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async () => {
 	try {
 		const invoices = await db.query.invoices.findMany({
 			with: {

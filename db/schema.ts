@@ -85,6 +85,9 @@ export const invoices = pgTable('invoices', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
+export type Invoice = typeof invoices.$inferSelect;
+export type InvoiceInsert = typeof invoices.$inferInsert;
+
 // Invoice Items
 export const invoiceItems = pgTable('invoice_items', {
   id: uuid('id').primaryKey().defaultRandom(),

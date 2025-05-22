@@ -1,6 +1,8 @@
 <template>
+  <div>
     <UButton to="/clients/new">New</UButton>
     <UTable :data="safeClients" :columns="columns" />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -8,9 +10,7 @@ import type { TableColumn } from '@nuxt/ui';
 import type { Client } from '~/db/schema';
 
 // Fetch clients with proper error handling and default value
-const { data: clients, error } = await useFetch<Client[]>('/api/clients', {
-    default: () => []
-});
+const { data: clients, error } = await useFetch<Client[]>('/api/clients');
 
 // Make sure we always have an array, even if the API returns null
 const safeClients = computed(() => clients.value || []);
