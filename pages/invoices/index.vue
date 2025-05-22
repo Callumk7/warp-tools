@@ -8,14 +8,14 @@
       </div>
       <UCard>
         <div class="divide-y space-y-4 divide-slate-800">
-          <div v-for="invoice in invoices" :key="invoice.id">
-            <div class="flex justify-between w-full">
-              <h4 class="font-bold text-lg">{{ invoice.invoiceNumber }}</h4>
-              <p>{{ invoice.subtotal }}</p>
-            </div>
-            <p>{{ invoice.notes }}</p>
-            <UBadge :color="invoice.status === 'PAID' ? 'success' : 'warning'">{{ invoice.status }}</UBadge>
-          </div>
+          <InvoiceCard 
+            v-for="invoice in invoices" 
+            :key="invoice.id" 
+            :invoice-number="invoice.invoiceNumber"
+            :invoice-amount="invoice.subtotal" 
+            :invoice-due-date="invoice.dueDate" 
+            :invoice-status="invoice.status" 
+          />
         </div>
       </UCard>
     </div>
