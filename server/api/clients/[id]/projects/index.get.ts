@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import { projects } from "~/db/schema";
+import { project } from "~/db/schema";
 
 export default defineEventHandler(async (event) => {
 	if (!event.context.params || !event.context.params.id) {
@@ -13,8 +13,8 @@ export default defineEventHandler(async (event) => {
 	console.log(id);
 
 	try {
-		const projectsResult = await db.query.projects.findMany({
-			where: eq(projects.clientId, id),
+		const projectsResult = await db.query.project.findMany({
+			where: eq(project.clientId, id),
 			with: {
 				invoices: true
 			}

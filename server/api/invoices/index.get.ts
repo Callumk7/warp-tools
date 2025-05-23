@@ -1,6 +1,6 @@
 export default defineEventHandler(async () => {
 	try {
-		const invoices = await db.query.invoices.findMany({
+		const invoices = await db.query.invoice.findMany({
 			with: {
 				project: true
 			}

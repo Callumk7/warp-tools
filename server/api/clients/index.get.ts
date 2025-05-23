@@ -1,20 +1,19 @@
-import { db } from '~/server/utils/db';
+import { db } from "~/server/utils/db";
 
-export default defineEventHandler(async (event) => {
-  try {
-    const clients = await db.query.clients.findMany({
-      with: {
-        projects: true
-      }
-    });
-    
-    return clients || [];
-  } catch (error) {
-    console.error('Error fetching clients:', error);
-    throw createError({
-      statusCode: 500,
-      message: 'Error fetching clients'
-    });
-  }
+export default defineEventHandler(async () => {
+	try {
+		const clients = await db.query.client.findMany({
+			with: {
+				projects: true,
+			},
+		});
+
+		return clients || [];
+	} catch (error) {
+		console.error("Error fetching clients:", error);
+		throw createError({
+			statusCode: 500,
+			message: "Error fetching clients",
+		});
+	}
 });
-

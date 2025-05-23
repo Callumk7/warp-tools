@@ -8,16 +8,17 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "db:generate": "drizzle-kit generate:pg",
-    "db:migrate": "node -r dotenv/config ./scripts/migrate.js",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx scripts/seed.ts"
   },
   "dependencies": {
+    "@internationalized/date": "^3.8.1",
     "@nuxt/eslint": "1.4.1",
     "@nuxt/icon": "1.13.0",
     "@nuxt/ui": "^3.1.2",
-    "bcrypt": "^6.0.0",
+    "better-auth": "^1.2.8",
     "dotenv": "^16.5.0",
     "drizzle-orm": "^0.43.1",
     "eslint": "^9.0.0",
@@ -31,6 +32,7 @@
   },
   "packageManager": "pnpm@8.10.2+sha1.e0b68270e89c817ff88b7be62466a2128c53af02",
   "devDependencies": {
+    "@iconify-json/lucide": "^1.2.44",
     "@types/pg": "^8.15.2",
     "drizzle-kit": "^0.31.1",
     "prettier": "^3.5.3",

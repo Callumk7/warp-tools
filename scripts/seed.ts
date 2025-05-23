@@ -1,7 +1,6 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import { v4 as uuidv4 } from 'uuid';
-import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import * as schema from '../db/schema';
 
@@ -26,7 +25,7 @@ const randomNumber = (min: number, max: number): number => {
 };
 
 // Helper function to pick a random item from an array
-const randomItem = <T>(array: T[]): T => {
+const randomItem = <T>(array: readonly T[]): T => {
   return array[Math.floor(Math.random() * array.length)];
 };
 
@@ -35,16 +34,10 @@ const seedDatabase = async () => {
   try {
     console.log('Starting database seed...');
 
-    // Hash a password for the demo user
-    const passwordHash = await bcrypt.hash('password123', 10);
-
     // Create a user
-    const userId = uuidv4();
-    await db.insert(schema.users).values({
-      id: userId,
-      email: 'demo@example.com',
-      passwordHash,
-      name: 'Demo User',
+    const userId = "4cM7YSsjPqNC1cXwQdfcVaOF5dRdsNIx";
+    await db.insert(schema.profile).values({
+      userId: userId,
       businessName: 'Freelance Solutions',
       businessAddress: '123 Business St, London, UK',
       taxId: 'GB123456789',
@@ -55,6 +48,8 @@ const seedDatabase = async () => {
       createdAt: new Date(),
       updatedAt: new Date(),
     });
+
+
     console.log('✅ Created demo user');
 
     // Create clients
@@ -106,7 +101,7 @@ const seedDatabase = async () => {
       },
     ];
 
-    await db.insert(schema.clients).values(clients);
+    await db.insert(schema.client).values(clients);
     console.log(`✅ Created ${clients.length} clients`);
 
     // Create projects
@@ -125,7 +120,7 @@ const seedDatabase = async () => {
         const rateType = randomItem(rateTypes);
         
         projects.push({
-          id: uuidv4(),
+        id: uuidv4(),
           userId,
           clientId: client.id,
           name: `${client.name} Project ${i + 1}`,
@@ -143,7 +138,7 @@ const seedDatabase = async () => {
       }
     }
 
-    await db.insert(schema.projects).values(projects);
+    await db.insert(schema.project).values(projects);
     console.log(`✅ Created ${projects.length} projects`);
 
     // Create invoices
@@ -185,7 +180,7 @@ const seedDatabase = async () => {
       }
     }
 
-    await db.insert(schema.invoices).values(invoices);
+    await db.insert(schema.invoice).values(invoices);
     console.log(`✅ Created ${invoices.length} invoices`);
 
     // Create invoice items
@@ -212,7 +207,7 @@ const seedDatabase = async () => {
       }
     }
 
-    await db.insert(schema.invoiceItems).values(invoiceItems);
+    await db.insert(schema.invoiceItem).values(invoiceItems);
     console.log(`✅ Created ${invoiceItems.length} invoice items`);
 
     // Create payments for some of the invoices
@@ -239,7 +234,7 @@ const seedDatabase = async () => {
       }
     }
 
-    await db.insert(schema.payments).values(payments);
+    await db.insert(schema.payment).values(payments);
     console.log(`✅ Created ${payments.length} payments`);
 
     // Create expenses
@@ -286,7 +281,7 @@ const seedDatabase = async () => {
       });
     }
 
-    await db.insert(schema.expenses).values(expenses);
+    await db.insert(schema.expense).values(expenses);
     console.log(`✅ Created ${expenses.length} expenses`);
 
     // Create time entries for hourly projects
@@ -318,7 +313,7 @@ const seedDatabase = async () => {
       }
     }
 
-    await db.insert(schema.timeEntries).values(timeEntries);
+    await db.insert(schema.timeEntry).values(timeEntries);
     console.log(`✅ Created ${timeEntries.length} time entries`);
 
     console.log('✅ Database seeding completed successfully!');

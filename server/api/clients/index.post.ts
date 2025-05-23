@@ -1,5 +1,5 @@
 import { db } from '../../utils/db';
-import { clients } from '../../../db/schema';
+import { client } from '../../../db/schema';
 import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -60,7 +60,7 @@ export default defineEventHandler(async (event) => {
     };
     
     // Insert client into database
-    await db.insert(clients).values(clientData);
+    await db.insert(client).values(clientData);
     
     // Return success response with the new client ID
     return {

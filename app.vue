@@ -1,14 +1,10 @@
 <template>
   <UApp>
-    <div class="flex h-screen">
-      <AppSidebar />
-      <div class="flex-1 overflow-y-auto">
-        <div class="w-11/12 mx-auto mt-10">
-          <UTabs v-model="activeTab" color="neutral" variant="link" :items="items" class="w-fit" />
-          <div class="mt-5 ml-4">
-            <NuxtPage />
-          </div>
-        </div>
+    <div class="w-11/12 mx-auto mt-10">
+      <SignOutButton />
+      <UTabs v-model="activeTab" color="neutral" variant="link" :items="items" class="w-fit" />
+      <div class="mt-5 ml-4">
+        <NuxtPage />
       </div>
     </div>
   </UApp>

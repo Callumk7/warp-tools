@@ -1,5 +1,5 @@
 import { db } from '../../utils/db';
-import { clients } from '../../../db/schema';
+import { client } from '../../../db/schema';
 import { eq } from 'drizzle-orm';
 
 export default defineEventHandler(async (event) => {
@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
     }
     
     // Update client in database
-    await db.update(clients)
+    await db.update(client)
       .set({
         name: body.name,
         contactPerson: body.contactPerson,
@@ -29,7 +29,7 @@ export default defineEventHandler(async (event) => {
         notes: body.notes,
         updatedAt: new Date()
       })
-      .where(eq(clients.id, id));
+      .where(eq(client.id, id));
     
     return { id, success: true };
   } catch (error) {
