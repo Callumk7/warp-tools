@@ -1,4 +1,5 @@
 import { type Invoice, invoice, type InvoiceInsert } from "~/db/schema";
+import { db } from "~/server/utils/db";
 
 export type NewInvoice = Omit<InvoiceInsert, "updatedAt" | "createdAt">;
 

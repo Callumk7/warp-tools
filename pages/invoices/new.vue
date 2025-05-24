@@ -77,16 +77,58 @@ const calculateTotal = () => {
 	return state.items.reduce((sum, item) => sum + Number(item.amount), 0);
 };
 
+const isSubmitting = ref(false);
+
 const onSubmit = async () => {
-	const result = await useFetch("/api/invoices", {
-		method: "POST",
-		body: {
-			clientId: selectedClient.value,
-			invoiceNumber: invoiceNumber.value,
-			issueDate: issueDate.value?.toDate("gmt"),
-			dueDate: dueDate.value?.toDate("gmt"),
-		},
-	});
+	if (isSubmitting.value) return;
+	
+	const filteredItems = state.items.filter(item => item.description.trim() !== "");
+	if (filteredItems.length === 0) {
+		alert("Please add at least one invoice item");
+		return;
+	}
+
+	if (!invoiceNumber.value.trim()) {
+		alert("Please enter an invoice number");
+		return;
+	}
+
+	if (!issueDate.value || !dueDate.value) {
+		alert("Please select issue and due dates");
+		return;
+	}
+
+	isSubmitting.value = true;
+	
+	try {
+		const subtotalAmount = calculateTotal();
+		const taxAmount = 0; // Currently no tax
+		const totalAmount = subtotalAmount + taxAmount;
+
+		const result = await $fetch("/api/invoices", {
+			method: "POST",
+			body: {
+				projectId: null, // Optional for now
+				invoiceNumber: invoiceNumber.value,
+				issueDate: issueDate.value?.toDate("gmt"),
+				dueDate: dueDate.value?.toDate("gmt"),
+				subtotal: subtotalAmount,
+				taxRate: 0,
+				taxAmount: taxAmount,
+				total: totalAmount,
+				items: filteredItems,
+			},
+		});
+
+		if (result.success) {
+			await navigateTo("/invoices");
+		}
+	} catch (error) {
+		console.error("Failed to create invoice:", error);
+		alert("Failed to create invoice. Please try again.");
+	} finally {
+		isSubmitting.value = false;
+	}
 };
 </script>
 
@@ -155,7 +197,9 @@ const onSubmit = async () => {
 									<DatePicker v-model="dueDate" class="w-full" />
 								</UFormField>
 							</div>
-							<UButton type="submit">Send</UButton>
+							<UButton type="submit" :loading="isSubmitting" :disabled="isSubmitting">
+								{{ isSubmitting ? "Creating..." : "Create Invoice" }}
+							</UButton>
 						</div>
 					</UCard>
 					<!-- Invoice Items -->
