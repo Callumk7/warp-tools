@@ -7,10 +7,11 @@
         <UButton icon="i-lucide-plus" color="neutral" class="float-right" to="/invoices/new">New Invoice</UButton>
       </div>
       <UCard>
-        <div class="divide-y space-y-4 divide-slate-800">
+        <div class="space-y-4">
           <InvoiceCard 
             v-for="invoice in invoices" 
             :key="invoice.id" 
+            :invoice-id="invoice.id"
             :invoice-number="invoice.invoiceNumber"
             :invoice-amount="invoice.subtotal" 
             :invoice-due-date="invoice.dueDate" 
