@@ -26,6 +26,9 @@ dependencies:
   drizzle-orm:
     specifier: ^0.43.1
     version: 0.43.1(@types/pg@8.15.2)(pg@8.16.0)
+  drizzle-zod:
+    specifier: ^0.6.0
+    version: 0.6.1(drizzle-orm@0.43.1)(zod@3.24.4)
   eslint:
     specifier: ^9.0.0
     version: 9.27.0
@@ -4873,6 +4876,16 @@ packages:
     dependencies:
       '@types/pg': 8.15.2
       pg: 8.16.0
+    dev: false
+
+  /drizzle-zod@0.6.1(drizzle-orm@0.43.1)(zod@3.24.4):
+    resolution: {integrity: sha512-huEbUgnsuR8tupnmLiyB2F1I2H9dswI3GfM36IbIqx9i0YUeYjRsDpJVyFVeziUvI1ogT9JHRL2Q03cC4QmvxA==}
+    peerDependencies:
+      drizzle-orm: '>=0.36.0'
+      zod: '>=3.0.0'
+    dependencies:
+      drizzle-orm: 0.43.1(@types/pg@8.15.2)(pg@8.16.0)
+      zod: 3.24.4
     dev: false
 
   /dunder-proto@1.0.1:

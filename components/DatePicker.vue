@@ -2,16 +2,24 @@
 import { CalendarDate, DateFormatter, getLocalTimeZone } from "@internationalized/date";
 
 interface Props {
-	className?: string;
+	class?: string;
+	modelValue?: CalendarDate;
 }
 
 const props = defineProps<Props>();
+const emit = defineEmits<{
+	"update:modelValue": [value: CalendarDate];
+}>();
 
 const df = new DateFormatter("en-US", {
 	dateStyle: "medium",
 });
 
-const modelValue = shallowRef(new CalendarDate(2022, 1, 10));
+// Create a computed property for two-way binding
+const selectedDate = computed({
+	get: () => props.modelValue ?? new CalendarDate(2022, 1, 10),
+	set: (value) => emit("update:modelValue", value),
+});
 </script>
 
 <template>
@@ -20,17 +28,17 @@ const modelValue = shallowRef(new CalendarDate(2022, 1, 10));
 			color="neutral"
 			variant="outline"
 			icon="i-lucide-calendar"
-			:class="props.className"
+			:class="props.class"
 		>
 			{{
-				modelValue
-					? df.format(modelValue.toDate(getLocalTimeZone()))
+				selectedDate
+					? df.format(selectedDate.toDate(getLocalTimeZone()))
 					: "Select a date"
 			}}
 		</UButton>
 
 		<template #content>
-			<UCalendar v-model="modelValue" class="p-2" />
+			<UCalendar v-model="selectedDate" class="p-2" />
 		</template>
 	</UPopover>
 </template>

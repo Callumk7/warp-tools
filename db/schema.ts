@@ -1,142 +1,182 @@
-import { pgTable, uuid, text, timestamp, boolean, integer, doublePrecision, pgEnum } from 'drizzle-orm/pg-core';
-import { relations } from 'drizzle-orm';
-import { user } from './auth-schema';
+import {
+	pgTable,
+	uuid,
+	text,
+	timestamp,
+	boolean,
+	integer,
+	doublePrecision,
+	pgEnum,
+} from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import { user } from "./auth-schema";
+import { createInsertSchema } from "drizzle-zod";
 
 // Enums
-export const projectStatusEnum = pgEnum('project_status', ['IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'ON_HOLD']);
-export const rateTypeEnum = pgEnum('rate_type', ['HOURLY', 'FIXED']);
-export const invoiceStatusEnum = pgEnum('invoice_status', ['DRAFT', 'SENT', 'PAID', 'PARTIALLY_PAID', 'OVERDUE', 'CANCELLED']);
+export const projectStatusEnum = pgEnum("project_status", [
+	"IN_PROGRESS",
+	"COMPLETED",
+	"CANCELLED",
+	"ON_HOLD",
+]);
+export const rateTypeEnum = pgEnum("rate_type", ["HOURLY", "FIXED"]);
+export const invoiceStatusEnum = pgEnum("invoice_status", [
+	"DRAFT",
+	"SENT",
+	"PAID",
+	"PARTIALLY_PAID",
+	"OVERDUE",
+	"CANCELLED",
+]);
 
 // Users
-export const profile = pgTable('profile', {
-	id: uuid('id').primaryKey().defaultRandom(),
-	userId: text('user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),
-	createdAt: timestamp('created_at').defaultNow().notNull(),
-	updatedAt: timestamp('updated_at').defaultNow().notNull(),
+export const profile = pgTable("profile", {
+	id: uuid("id").primaryKey().defaultRandom(),
+	userId: text("user_id")
+		.notNull()
+		.references(() => user.id, { onDelete: "cascade" }),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+	updatedAt: timestamp("updated_at").defaultNow().notNull(),
 
 	// Business details
-	businessName: text('business_name'),
-	businessAddress: text('business_address'),
-	taxId: text('tax_id'),
-	phoneNumber: text('phone_number'),
-	website: text('website'),
+	businessName: text("business_name"),
+	businessAddress: text("business_address"),
+	taxId: text("tax_id"),
+	phoneNumber: text("phone_number"),
+	website: text("website"),
 
-	// App settings
-	defaultCurrency: text('default_currency').default('GBP').notNull(),
-	defaultTaxRate: doublePrecision('default_tax_rate').default(20), // UK VAT rate
+	// App settingsschema
+	defaultCurrency: text("default_currency").default("GBP").notNull(),
+	defaultTaxRate: doublePrecision("default_tax_rate").default(20), // UK VAT rate
 });
 
 // Clients
-export const client = pgTable('client', {
-	id: uuid('id').primaryKey().defaultRandom(),
-	userId: text('user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),
-	name: text('name').notNull(),
-	contactPerson: text('contact_person'),
-	email: text('email'),
-	phoneNumber: text('phone_number'),
-	address: text('address'),
-	city: text('city'),
-	postcode: text('postcode'),
-	country: text('country'),
-	notes: text('notes'),
-	createdAt: timestamp('created_at').defaultNow().notNull(),
-	updatedAt: timestamp('updated_at').defaultNow().notNull(),
+export const client = pgTable("client", {
+	id: uuid("id").primaryKey().defaultRandom(),
+	userId: text("user_id")
+		.notNull()
+		.references(() => user.id, { onDelete: "cascade" }),
+	name: text("name").notNull(),
+	contactPerson: text("contact_person"),
+	email: text("email"),
+	phoneNumber: text("phone_number"),
+	address: text("address"),
+	city: text("city"),
+	postcode: text("postcode"),
+	country: text("country"),
+	notes: text("notes"),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+	updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 export type Client = typeof client.$inferSelect;
 export type ClientInsert = typeof client.$inferInsert;
 
 // Projects
-export const project = pgTable('project', {
-	id: uuid('id').primaryKey().defaultRandom(),
-	userId: text('user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),
-	clientId: uuid('client_id').notNull().references(() => client.id, { onDelete: 'cascade' }),
-	name: text('name').notNull(),
-	description: text('description'),
-	startDate: timestamp('start_date'),
-	endDate: timestamp('end_date'),
-	status: projectStatusEnum('status').default('IN_PROGRESS').notNull(),
-	rateType: rateTypeEnum('rate_type').default('HOURLY').notNull(),
-	rateAmount: doublePrecision('rate_amount'),
-	currency: text('currency').default('GBP').notNull(),
-	notes: text('notes'),
-	createdAt: timestamp('created_at').defaultNow().notNull(),
-	updatedAt: timestamp('updated_at').defaultNow().notNull(),
+export const project = pgTable("project", {
+	id: uuid("id").primaryKey().defaultRandom(),
+	userId: text("user_id")
+		.notNull()
+		.references(() => user.id, { onDelete: "cascade" }),
+	clientId: uuid("client_id")
+		.notNull()
+		.references(() => client.id, { onDelete: "cascade" }),
+	name: text("name").notNull(),
+	description: text("description"),
+	startDate: timestamp("start_date"),
+	endDate: timestamp("end_date"),
+	status: projectStatusEnum("status").default("IN_PROGRESS").notNull(),
+	rateType: rateTypeEnum("rate_type").default("HOURLY").notNull(),
+	rateAmount: doublePrecision("rate_amount"),
+	currency: text("currency").default("GBP").notNull(),
+	notes: text("notes"),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+	updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-
 // Invoices
-export const invoice = pgTable('invoice', {
-	id: uuid('id').primaryKey().defaultRandom(),
-	userId: text('user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),
-	projectId: uuid('project_id').references(() => project.id, { onDelete: 'set null' }),
-	invoiceNumber: text('invoice_number').notNull().unique(),
-	issueDate: timestamp('issue_date').defaultNow().notNull(),
-	dueDate: timestamp('due_date').notNull(),
-	status: invoiceStatusEnum('status').default('DRAFT').notNull(),
-	subtotal: doublePrecision('subtotal').notNull(),
-	taxRate: doublePrecision('tax_rate'),
-	taxAmount: doublePrecision('tax_amount'),
-	total: doublePrecision('total').notNull(),
-	notes: text('notes'),
-	paymentTerms: text('payment_terms'),
-	createdAt: timestamp('created_at').defaultNow().notNull(),
-	updatedAt: timestamp('updated_at').defaultNow().notNull(),
+export const invoice = pgTable("invoice", {
+	id: uuid("id").primaryKey().defaultRandom(),
+	userId: text("user_id")
+		.notNull()
+		.references(() => user.id, { onDelete: "cascade" }),
+	projectId: uuid("project_id").references(() => project.id, { onDelete: "set null" }),
+	invoiceNumber: text("invoice_number").notNull().unique(),
+	issueDate: timestamp("issue_date").defaultNow().notNull(),
+	dueDate: timestamp("due_date").notNull(),
+	status: invoiceStatusEnum("status").default("DRAFT").notNull(),
+	subtotal: doublePrecision("subtotal").notNull(),
+	taxRate: doublePrecision("tax_rate"),
+	taxAmount: doublePrecision("tax_amount"),
+	total: doublePrecision("total").notNull(),
+	notes: text("notes"),
+	paymentTerms: text("payment_terms"),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+	updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 export type Invoice = typeof invoice.$inferSelect;
 export type InvoiceInsert = typeof invoice.$inferInsert;
+export const invoiceInsertSchema = createInsertSchema(invoice);
 
 // Invoice Items
-export const invoiceItem = pgTable('invoice_item', {
-	id: uuid('id').primaryKey().defaultRandom(),
-	invoiceId: uuid('invoice_id').notNull().references(() => invoice.id, { onDelete: 'cascade' }),
-	description: text('description').notNull(),
-	quantity: doublePrecision('quantity').notNull(),
-	unitPrice: doublePrecision('unit_price').notNull(),
-	amount: doublePrecision('amount').notNull(),
-	taxable: boolean('taxable').default(true).notNull(),
+export const invoiceItem = pgTable("invoice_item", {
+	id: uuid("id").primaryKey().defaultRandom(),
+	invoiceId: uuid("invoice_id")
+		.notNull()
+		.references(() => invoice.id, { onDelete: "cascade" }),
+	description: text("description").notNull(),
+	quantity: doublePrecision("quantity").notNull(),
+	unitPrice: doublePrecision("unit_price").notNull(),
+	amount: doublePrecision("amount").notNull(),
+	taxable: boolean("taxable").default(true).notNull(),
 });
 
 // Payments
-export const payment = pgTable('payment', {
-	id: uuid('id').primaryKey().defaultRandom(),
-	invoiceId: uuid('invoice_id').notNull().references(() => invoice.id, { onDelete: 'cascade' }),
-	amount: doublePrecision('amount').notNull(),
-	paymentDate: timestamp('payment_date').notNull(),
-	paymentMethod: text('payment_method'),
-	reference: text('reference'),
-	notes: text('notes'),
-	createdAt: timestamp('created_at').defaultNow().notNull(),
+export const payment = pgTable("payment", {
+	id: uuid("id").primaryKey().defaultRandom(),
+	invoiceId: uuid("invoice_id")
+		.notNull()
+		.references(() => invoice.id, { onDelete: "cascade" }),
+	amount: doublePrecision("amount").notNull(),
+	paymentDate: timestamp("payment_date").notNull(),
+	paymentMethod: text("payment_method"),
+	reference: text("reference"),
+	notes: text("notes"),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 // Expenses
-export const expense = pgTable('expense', {
-	id: uuid('id').primaryKey().defaultRandom(),
-	userId: text('user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),
-	projectId: uuid('project_id').references(() => project.id, { onDelete: 'set null' }),
-	date: timestamp('date').notNull(),
-	category: text('category').notNull(),
-	amount: doublePrecision('amount').notNull(),
-	currency: text('currency').default('GBP').notNull(),
-	description: text('description'),
-	receiptUrl: text('receipt_url'),
-	billable: boolean('billable').default(false).notNull(),
-	createdAt: timestamp('created_at').defaultNow().notNull(),
-	updatedAt: timestamp('updated_at').defaultNow().notNull(),
+export const expense = pgTable("expense", {
+	id: uuid("id").primaryKey().defaultRandom(),
+	userId: text("user_id")
+		.notNull()
+		.references(() => user.id, { onDelete: "cascade" }),
+	projectId: uuid("project_id").references(() => project.id, { onDelete: "set null" }),
+	date: timestamp("date").notNull(),
+	category: text("category").notNull(),
+	amount: doublePrecision("amount").notNull(),
+	currency: text("currency").default("GBP").notNull(),
+	description: text("description"),
+	receiptUrl: text("receipt_url"),
+	billable: boolean("billable").default(false).notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+	updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 // Time Entries
-export const timeEntry = pgTable('time_entries', {
-	id: uuid('id').primaryKey().defaultRandom(),
-	projectId: uuid('project_id').notNull().references(() => project.id, { onDelete: 'cascade' }),
-	description: text('description'),
-	startTime: timestamp('start_time').notNull(),
-	endTime: timestamp('end_time'),
-	duration: integer('duration'), // Duration in minutes
-	billable: boolean('billable').default(true).notNull(),
-	createdAt: timestamp('created_at').defaultNow().notNull(),
-	updatedAt: timestamp('updated_at').defaultNow().notNull(),
+export const timeEntry = pgTable("time_entries", {
+	id: uuid("id").primaryKey().defaultRandom(),
+	projectId: uuid("project_id")
+		.notNull()
+		.references(() => project.id, { onDelete: "cascade" }),
+	description: text("description"),
+	startTime: timestamp("start_time").notNull(),
+	endTime: timestamp("end_time"),
+	duration: integer("duration"), // Duration in minutes
+	billable: boolean("billable").default(true).notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+	updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 // Relations
