@@ -94,6 +94,9 @@ export const project = pgTable("project", {
 	updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export type Project = typeof project.$inferSelect;
+export type ProjectInsert = typeof project.$inferInsert;
+
 // Invoices
 export const invoice = pgTable("invoice", {
 	id: uuid("id").primaryKey().defaultRandom(),

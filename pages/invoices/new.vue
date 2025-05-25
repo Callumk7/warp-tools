@@ -5,6 +5,7 @@ import type { Client } from "~/db/schema";
 const { data: clients, error, status } = await useFetch<Client[]>("/api/clients");
 
 const selectedClient = ref(undefined);
+const selectedProject = ref(undefined);
 
 // Transform clients data into the format expected by USelect
 const formattedClients = computed(() => {
@@ -14,6 +15,30 @@ const formattedClients = computed(() => {
 			value: client.id.toString(),
 		})) || []
 	);
+});
+
+// Fetch projects
+const { data: projects } = await useFetch<Array<{
+	id: string;
+	name: string;
+	clientId: string;
+	client: { name: string };
+}>>("/api/projects");
+
+// Filter projects based on selected client
+const filteredProjects = computed(() => {
+	if (!selectedClient.value || !projects.value) return [];
+	return projects.value
+		.filter((project) => project.clientId === selectedClient.value)
+		.map((project) => ({
+			label: project.name,
+			value: project.id,
+		}));
+});
+
+// Clear project selection when client changes
+watch(selectedClient, () => {
+	selectedProject.value = undefined;
 });
 
 interface InvoiceItem {
@@ -108,7 +133,7 @@ const onSubmit = async () => {
 		const result = await $fetch("/api/invoices", {
 			method: "POST",
 			body: {
-				projectId: null, // Optional for now
+				projectId: selectedProject.value || null,
 				invoiceNumber: invoiceNumber.value,
 				issueDate: issueDate.value?.toDate("gmt"),
 				dueDate: dueDate.value?.toDate("gmt"),
@@ -166,9 +191,12 @@ const onSubmit = async () => {
 								</UFormField>
 
 								<UFormField label="Project" name="project" class="flex-1">
-									<UInput
-										placeholder="Project name or description"
+									<USelect
+										v-model="selectedProject"
+										:items="filteredProjects"
+										placeholder="Select a project (optional)"
 										class="w-full"
+										:disabled="!selectedClient"
 									/>
 								</UFormField>
 							</div>
