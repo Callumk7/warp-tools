@@ -7,6 +7,10 @@ const { data: clients, error, status } = await useFetch<Client[]>("/api/clients"
 const selectedClient = ref(undefined);
 const selectedProject = ref(undefined);
 
+watch(selectedClient, () => {
+	console.log(selectedClient.value);
+});
+
 // Transform clients data into the format expected by USelect
 const formattedClients = computed(() => {
 	return (
@@ -132,6 +136,7 @@ const onSubmit = async () => {
 			method: "POST",
 			body: {
 				projectId: selectedProject.value || null,
+				clientId: selectedClient.value || null,
 				invoiceNumber: invoiceNumber.value,
 				issueDate: issueDate.value?.toDate("gmt"),
 				dueDate: dueDate.value?.toDate("gmt"),
@@ -183,7 +188,6 @@ const onSubmit = async () => {
 										:items="formattedClients"
 										:loading="status === 'pending'"
 										placeholder="Select a client"
-										value-key="value"
 										class="w-56"
 									/>
 								</UFormField>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import CreateProjectModal from "~/components/projects/CreateProjectModal.vue";
-import type { Project, Client } from "~/db/schema";
+import type { Project, Client, Invoice } from "~/db/schema";
 
 definePageMeta({
 	title: "Client Details",
@@ -10,7 +10,7 @@ const route = useRoute();
 const clientId = route.params.id as string;
 
 const { data: client, refresh: refreshClient } = await useFetch<
-	Client & { projects: Project[] }
+	Client & { projects: Project[]; invoices: Invoice[] }
 >(`/api/clients/${clientId}`);
 
 const breadcrumbItems = computed(() => [
@@ -147,14 +147,7 @@ const onProjectCreated = () => {
 
 		<!-- Projects Section -->
 		<div class="space-y-4">
-			<div class="flex items-center justify-between">
-				<h2 class="text-xl font-semibold">
-					Projects
-					<span class="text-sm font-normal text-muted">
-						({{ client.projects?.length || 0 }})
-					</span>
-				</h2>
-			</div>
+			<Heading :count="client.projects?.length ?? 0">Projects</Heading>
 
 			<!-- Projects Table or Empty State -->
 			<UCard v-if="client.projects && client.projects.length > 0">
@@ -177,6 +170,35 @@ const onProjectCreated = () => {
 						:client-id="client.id"
 						@create-project="onProjectCreated"
 					/>
+				</div>
+			</div>
+		</div>
+
+		<!--Invoice Section -->
+		<div class="space-y-4">
+			<Heading :count="client.invoices?.length ?? 0">Invoices</Heading>
+			<!-- Projects Table or Empty State -->
+			<UCard v-if="client.invoices && client.invoices.length > 0">
+				<div v-for="invoice in client.invoices" :key="invoice.id">
+					<p>{{ invoice.id }}</p>
+				</div>
+			</UCard>
+
+			<!-- Empty State -->
+			<div v-else class="text-center py-12 shadow rounded-lg">
+				<div class="flex flex-col items-center">
+					<div
+						class="w-16 h-16 rounded-full flex items-center justify-center mb-4"
+					>
+						<UIcon name="i-lucide-folder-open" class="w-8 h-8 text-muted" />
+					</div>
+					<h3 class="text-lg font-medium mb-2">No invoices yet</h3>
+					<p class="text-muted mb-6">
+						Get started by creating an invoice for this client.
+					</p>
+					<UButton :to="`/invoices/new?clientId=${client.id}`">
+						Create Invoice
+					</UButton>
 				</div>
 			</div>
 		</div>

@@ -207,6 +207,7 @@ export const clientRelations = relations(client, ({ one, many }) => ({
 		references: [user.id],
 	}),
 	projects: many(project),
+	invoices: many(invoice),
 }));
 
 export const projectRelations = relations(project, ({ one, many }) => ({

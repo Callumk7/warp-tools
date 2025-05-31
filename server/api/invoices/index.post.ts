@@ -1,6 +1,5 @@
 import { invoiceInsertSchema, invoiceItem } from "~/db/schema";
 import { createInvoice } from "~/server/actions/invoices";
-import { auth } from "~/server/utils/auth";
 import { db } from "~/server/utils/db";
 import { z } from "zod";
 
@@ -28,23 +27,15 @@ const bodySchema = invoiceInsertSchema
 
 export default defineEventHandler(async (event) => {
 	try {
-		// Get user from session
-		const session = await auth.api.getSession({ headers: event.headers });
-		if (!session?.user?.id) {
-			throw createError({
-				statusCode: 401,
-				message: "Unauthorized",
-			});
-		}
-
 		const body = await readBody(event);
+		console.log(body);
 		const validBody = bodySchema.parse(body);
 
 		// Create invoice
 		const { items, ...invoiceData } = validBody;
 		const invoice = await createInvoice({
 			...invoiceData,
-			userId: session.user.id,
+			userId: event.context.auth.user.id,
 		});
 
 		// Create invoice items

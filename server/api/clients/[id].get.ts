@@ -2,7 +2,7 @@ import { client } from "~/db/schema";
 import { eq } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
-	const id = event.context.params?.id;
+	const id = getRouterParam(event, "id");
 	if (!id) {
 		throw createError({
 			statusCode: 400,
@@ -15,6 +15,7 @@ export default defineEventHandler(async (event) => {
 			where: eq(client.id, id),
 			with: {
 				projects: true,
+				invoices: true,
 			},
 		});
 
