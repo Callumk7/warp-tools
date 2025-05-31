@@ -26,15 +26,11 @@ const columns: TableColumn<ProjectWithClient>[] = [
 		header: "Project Name",
 		cell: ({ row }) =>
 			h("div", [
-				h(
-					"div",
-					{ class: "font-semibold text-gray-900 dark:text-white" },
-					row.original.name,
-				),
+				h("div", { class: "font-semibold" }, row.original.name),
 				row.original.description
 					? h(
 							"div",
-							{ class: "text-sm text-gray-500 truncate max-w-xs" },
+							{ class: "text-sm text-dimmed truncate max-w-xs" },
 							row.original.description,
 						)
 					: null,
@@ -83,31 +79,6 @@ const columns: TableColumn<ProjectWithClient>[] = [
 ];
 
 // Status color mapping
-const getStatusColor = (status: string) => {
-	switch (status) {
-		case "COMPLETED":
-			return "success";
-		case "IN_PROGRESS":
-			return "secondary";
-		case "ON_HOLD":
-			return "warning";
-		case "CANCELLED":
-			return "error";
-		default:
-			return "neutral";
-	}
-};
-
-const statusOptions = [
-	{ label: "In Progress", value: "IN_PROGRESS" },
-	{ label: "Completed", value: "COMPLETED" },
-	{ label: "On Hold", value: "ON_HOLD" },
-	{ label: "Cancelled", value: "CANCELLED" },
-];
-
-const getStatusLabel = (status: string) => {
-	return statusOptions.find((option) => option.value === status)?.label || status;
-};
 
 const formatRate = (project: Project) => {
 	if (!project.rateAmount) return "Not set";
@@ -141,7 +112,7 @@ const editProject = (project: ProjectWithClient) => {
 	<div class="space-y-6">
 		<!-- Header -->
 		<div class="flex items-center justify-between">
-			<h1 class="text-3xl font-bold text-gray-900 dark:text-white">Projects</h1>
+			<h1 class="text-3xl font-bold">Projects</h1>
 			<CreateProjectModal />
 		</div>
 
@@ -149,4 +120,3 @@ const editProject = (project: ProjectWithClient) => {
 		<UTable :columns="columns" :data="projects || []" class="w-full" />
 	</div>
 </template>
-

@@ -71,6 +71,7 @@ export const client = pgTable("client", {
 
 export type Client = typeof client.$inferSelect;
 export type ClientInsert = typeof client.$inferInsert;
+export const clientInsertSchema = createInsertSchema(client);
 
 // Projects
 export const project = pgTable("project", {
@@ -96,6 +97,7 @@ export const project = pgTable("project", {
 
 export type Project = typeof project.$inferSelect;
 export type ProjectInsert = typeof project.$inferInsert;
+export const projectInsertSchema = createInsertSchema(project);
 
 // Invoices
 export const invoice = pgTable("invoice", {
@@ -104,6 +106,7 @@ export const invoice = pgTable("invoice", {
 		.notNull()
 		.references(() => user.id, { onDelete: "cascade" }),
 	projectId: uuid("project_id").references(() => project.id, { onDelete: "set null" }),
+	clientId: uuid("client_id").references(() => client.id, { onDelete: "set null" }),
 	invoiceNumber: text("invoice_number").notNull().unique(),
 	issueDate: timestamp("issue_date").defaultNow().notNull(),
 	dueDate: timestamp("due_date").notNull(),
@@ -142,6 +145,8 @@ export const payment = pgTable("payment", {
 		.notNull()
 		.references(() => invoice.id, { onDelete: "cascade" }),
 	amount: doublePrecision("amount").notNull(),
+	projectId: uuid("project_id").references(() => project.id, { onDelete: "set null" }),
+	clientId: uuid("client_id").references(() => client.id, { onDelete: "set null" }),
 	paymentDate: timestamp("payment_date").notNull(),
 	paymentMethod: text("payment_method"),
 	reference: text("reference"),
@@ -156,6 +161,7 @@ export const expense = pgTable("expense", {
 		.notNull()
 		.references(() => user.id, { onDelete: "cascade" }),
 	projectId: uuid("project_id").references(() => project.id, { onDelete: "set null" }),
+	externalInvoiceId: text("external_invoice_id"),
 	date: timestamp("date").notNull(),
 	category: text("category").notNull(),
 	amount: doublePrecision("amount").notNull(),
@@ -166,6 +172,10 @@ export const expense = pgTable("expense", {
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+export type Expense = typeof expense.$inferSelect;
+export type ExpenseInsert = typeof expense.$inferInsert;
+export const expenseInsertSchema = createInsertSchema(expense);
 
 // Time Entries
 export const timeEntry = pgTable("time_entries", {
@@ -221,6 +231,10 @@ export const invoiceRelations = relations(invoice, ({ one, many }) => ({
 		fields: [invoice.projectId],
 		references: [project.id],
 	}),
+	client: one(client, {
+		fields: [invoice.clientId],
+		references: [client.id],
+	}),
 	items: many(invoiceItem),
 	payments: many(payment),
 }));
@@ -236,6 +250,14 @@ export const paymentRelations = relations(payment, ({ one }) => ({
 	invoice: one(invoice, {
 		fields: [payment.invoiceId],
 		references: [invoice.id],
+	}),
+	project: one(project, {
+		fields: [payment.projectId],
+		references: [project.id],
+	}),
+	client: one(client, {
+		fields: [payment.clientId],
+		references: [client.id],
 	}),
 }));
 

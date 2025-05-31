@@ -1,76 +1,193 @@
 <template>
-	<div>
-		<h1 class="text-2xl font-bold mb-6">Create New Client</h1>
+	<div class="flex flex-col gap-6 min-h-screen">
+		<main class="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+			<div class="flex items-center gap-4">
+				<UButton variant="outline" icon="i-lucide-arrow-left" to="/clients" />
+				<h1 class="text-xl font-semibold">Create New Client</h1>
+			</div>
+			<div class="grid gap-6">
+				<Form @submit.prevent="onSubmit">
+					<UCard>
+						<template #header>
+							<div>
+								<h3 class="text-lg font-semibold">New Client</h3>
+								<p class="text-sm text-stone-500">Create a new client</p>
+							</div>
+						</template>
+						<div class="flex flex-col gap-4">
+							<div class="w-full flex justify-stretch items-center gap-2">
+								<UFormField label="Client Name" name="name" class="flex-1" required>
+									<UInput
+										v-model="state.name"
+										placeholder="Company or client name"
+										class="w-full"
+									/>
+								</UFormField>
 
-		<UCard variant="soft" class="w-fit mx-auto">
-			<UForm
-				:schema="schema"
-				:state="state"
-				class="space-y-4 flex flex-col"
-				@submit="onSubmit"
-			>
-				<UFormField label="Client Name" name="name" required>
-					<UInput v-model="state.name" placeholder="Company or client name" />
-				</UFormField>
+								<UFormField label="Contact Person" name="contactPerson" class="flex-1">
+									<UInput
+										v-model="state.contactPerson"
+										placeholder="Primary contact name"
+										class="w-full"
+									/>
+								</UFormField>
+							</div>
 
-				<UFormField label="Email" name="email">
-					<UInput
-						v-model="state.email"
-						type="email"
-						placeholder="contact@example.com"
-					/>
-				</UFormField>
+							<div class="w-full flex justify-stretch items-center gap-2">
+								<UFormField label="Email" name="email" class="flex-1">
+									<UInput
+										v-model="state.email"
+										type="email"
+										placeholder="contact@example.com"
+										class="w-full"
+									/>
+								</UFormField>
 
-				<UFormField label="Contact Person" name="contactPerson">
-					<UInput
-						v-model="state.contactPerson"
-						placeholder="Primary contact name"
-					/>
-				</UFormField>
+								<UFormField label="Phone Number" name="phoneNumber" class="flex-1">
+									<UInput
+										v-model="state.phoneNumber"
+										placeholder="Phone number"
+										class="w-full"
+									/>
+								</UFormField>
+							</div>
 
-				<UFormField label="Notes" name="notes">
-					<UTextarea
-						v-model="state.notes"
-						placeholder="Additional notes about this client"
-					/>
-				</UFormField>
+							<div class="w-full flex justify-stretch items-center gap-2">
+								<UFormField label="Address" name="address" class="flex-1">
+									<UInput
+										v-model="state.address"
+										placeholder="Street address"
+										class="w-full"
+									/>
+								</UFormField>
 
-				<UButton variant="outline" @click="navigateBack">Cancel</UButton>
-				<UButton type="submit" :loading="isSubmitting">
-					{{ isSubmitting ? "Creating..." : "Create Client" }}
-				</UButton>
-			</UForm>
-		</UCard>
+								<UFormField label="City" name="city" class="flex-1">
+									<UInput
+										v-model="state.city"
+										placeholder="City"
+										class="w-full"
+									/>
+								</UFormField>
+							</div>
+
+							<div class="w-full flex justify-stretch items-center gap-2">
+								<UFormField label="Postcode" name="postcode" class="flex-1">
+									<UInput
+										v-model="state.postcode"
+										placeholder="Postcode"
+										class="w-full"
+									/>
+								</UFormField>
+
+								<UFormField label="Country" name="country" class="flex-1">
+									<UInput
+										v-model="state.country"
+										placeholder="Country"
+										class="w-full"
+									/>
+								</UFormField>
+							</div>
+
+							<UFormField label="Notes" name="notes">
+								<UTextarea
+									v-model="state.notes"
+									placeholder="Additional notes about this client"
+									class="w-full"
+								/>
+							</UFormField>
+
+							<UButton type="submit" :loading="isSubmitting" :disabled="isSubmitting">
+								{{ isSubmitting ? "Creating..." : "Create Client" }}
+							</UButton>
+						</div>
+					</UCard>
+				</Form>
+			</div>
+		</main>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { z } from "zod";
-
 const router = useRouter();
+const toast = useToast();
+const user = requireAuth();
 
-// Define the validation schema
-const createClientSchema = z.object({
-	name: z.string().min(1, "Client name is required"),
-	contactPerson: z.string().optional(),
-	email: z.string().email("Invalid email address").optional().nullable(),
-	phoneNumber: z.string().optional(),
-	address: z.string().optional(),
-	city: z.string().optional(),
-	postcode: z.string().optional(),
-	country: z.string().optional(),
-	notes: z.string().optional(),
+const state = reactive({
+	name: "",
+	contactPerson: "",
+	email: "",
+	phoneNumber: "",
+	address: "",
+	city: "",
+	postcode: "",
+	country: "",
+	notes: "",
 });
 
-const { schema, state, isSubmitting, onSubmit } = useEntityForm({
-	schema: createClientSchema,
-	endpoint: "/api/clients",
-	successMessage: "Client created successfully",
-	redirectPath: "/clients",
-});
+const isSubmitting = ref(false);
 
-// Navigate back to clients list
-function navigateBack() {
-	router.push("/clients");
+const onSubmit = async () => {
+	if (isSubmitting.value) return;
+
+	if (!state.name.trim()) {
+		toast.add({
+			title: "Error",
+			description: "Client name is required",
+			color: "error",
+		});
+		return;
+	}
+
+	if (state.email && !isValidEmail(state.email)) {
+		toast.add({
+			title: "Error",
+			description: "Please enter a valid email address",
+			color: "error",
+		});
+		return;
+	}
+
+	isSubmitting.value = true;
+
+	try {
+		const result = await $fetch("/api/clients", {
+			method: "POST",
+			body: {
+				name: state.name,
+				contactPerson: state.contactPerson || null,
+				email: state.email || null,
+				phoneNumber: state.phoneNumber || null,
+				address: state.address || null,
+				city: state.city || null,
+				postcode: state.postcode || null,
+				country: state.country || null,
+				notes: state.notes || null,
+				userId: user.id,
+			},
+		});
+
+		if (result.success) {
+			toast.add({
+				title: "Success",
+				description: "Client created successfully",
+				color: "success",
+			});
+			await navigateTo("/clients");
+		}
+	} catch (error) {
+		console.error("Failed to create client:", error);
+		toast.add({
+			title: "Error",
+			description: "Failed to create client. Please try again.",
+			color: "error",
+		});
+	} finally {
+		isSubmitting.value = false;
+	}
+};
+
+function isValidEmail(email: string): boolean {
+	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+	return emailRegex.test(email);
 }
 </script>

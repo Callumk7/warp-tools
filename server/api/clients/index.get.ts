@@ -1,5 +1,3 @@
-import { db } from "~/server/utils/db";
-
 export default defineEventHandler(async () => {
 	try {
 		const clients = await db.query.client.findMany({

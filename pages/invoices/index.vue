@@ -1,26 +1,32 @@
 <template>
-  <UCard>
-    <div class="flex flex-col gap-2">
-      <h2 class="text-2xl font-bold">Invoice Management</h2>
-      <p class="text-sm">Create, track, and manage all your invoices</p>
-      <div class="w-full">
-        <UButton icon="i-lucide-plus" color="neutral" class="float-right" to="/invoices/new">New Invoice</UButton>
-      </div>
-      <UCard>
-        <div class="space-y-4">
-          <InvoiceCard 
-            v-for="invoice in invoices" 
-            :key="invoice.id" 
-            :invoice-id="invoice.id"
-            :invoice-number="invoice.invoiceNumber"
-            :invoice-amount="invoice.subtotal" 
-            :invoice-due-date="invoice.dueDate" 
-            :invoice-status="invoice.status" 
-          />
-        </div>
-      </UCard>
-    </div>
-  </UCard>
+	<CardLayout
+		title="Invoice Management"
+		sub-title="Create, update, and manage all of your invoices."
+	>
+		<div class="w-full">
+			<UButton
+				icon="i-lucide-plus"
+				color="neutral"
+				class="float-right"
+				to="/invoices/new"
+			>
+				New Invoice
+			</UButton>
+		</div>
+		<div class="py-4 rounded-md border border-muted">
+			<div class="space-y-4 divide-y divide-muted">
+				<InvoiceCard
+					v-for="invoice in invoices"
+					:key="invoice.id"
+					:invoice-id="invoice.id"
+					:invoice-number="invoice.invoiceNumber"
+					:invoice-amount="invoice.subtotal"
+					:invoice-due-date="invoice.dueDate"
+					:invoice-status="invoice.status"
+				/>
+			</div>
+		</div>
+	</CardLayout>
 </template>
 
 <script setup lang="ts">

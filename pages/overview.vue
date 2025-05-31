@@ -16,7 +16,10 @@
 						:data="invoiceStatusData"
 						:options="chartOptions"
 					/>
-					<div v-else class="flex items-center justify-center h-full text-gray-500">
+					<div
+						v-else
+						class="flex items-center justify-center h-full text-muted"
+					>
 						No invoice data available
 					</div>
 				</div>
@@ -33,7 +36,10 @@
 						:data="topClientsData"
 						:options="barChartOptions"
 					/>
-					<div v-else class="flex items-center justify-center h-full text-gray-500">
+					<div
+						v-else
+						class="flex items-center justify-center h-full text-muted"
+					>
 						No client data available
 					</div>
 				</div>
@@ -44,26 +50,34 @@
 		<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
 			<UCard>
 				<div class="text-center">
-					<div class="text-3xl font-bold text-green-600">{{ stats.totalInvoices }}</div>
-					<div class="text-sm text-gray-500">Total Invoices</div>
+					<div class="text-3xl font-bold text-green-600">
+						{{ stats.totalInvoices }}
+					</div>
+					<div class="text-sm text-muted">Total Invoices</div>
 				</div>
 			</UCard>
 			<UCard>
 				<div class="text-center">
-					<div class="text-3xl font-bold text-blue-600">{{ formatCurrency(stats.totalRevenue) }}</div>
-					<div class="text-sm text-gray-500">Total Revenue</div>
+					<div class="text-3xl font-bold text-blue-600">
+						{{ formatCurrency(stats.totalRevenue) }}
+					</div>
+					<div class="text-sm text-muted">Total Revenue</div>
 				</div>
 			</UCard>
 			<UCard>
 				<div class="text-center">
-					<div class="text-3xl font-bold text-orange-600">{{ formatCurrency(stats.pendingAmount) }}</div>
-					<div class="text-sm text-gray-500">Pending Amount</div>
+					<div class="text-3xl font-bold text-orange-600">
+						{{ formatCurrency(stats.pendingAmount) }}
+					</div>
+					<div class="text-sm text-muted">Pending Amount</div>
 				</div>
 			</UCard>
 			<UCard>
 				<div class="text-center">
-					<div class="text-3xl font-bold text-purple-600">{{ stats.activeClients }}</div>
-					<div class="text-sm text-gray-500">Active Clients</div>
+					<div class="text-3xl font-bold text-purple-600">
+						{{ stats.activeClients }}
+					</div>
+					<div class="text-sm text-muted">Active Clients</div>
 				</div>
 			</UCard>
 		</div>
@@ -71,7 +85,7 @@
 </template>
 
 <script setup lang="ts">
-import { Doughnut, Bar } from 'vue-chartjs'
+import { Doughnut, Bar } from "vue-chartjs";
 import {
 	Chart as ChartJS,
 	Title,
@@ -81,19 +95,30 @@ import {
 	CategoryScale,
 	LinearScale,
 	BarElement,
-	type ChartOptions
-} from 'chart.js'
+	type ChartOptions,
+} from "chart.js";
 
-ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale, BarElement)
+ChartJS.register(
+	Title,
+	Tooltip,
+	Legend,
+	ArcElement,
+	CategoryScale,
+	LinearScale,
+	BarElement,
+);
 
-const { data: overviewData } = await useFetch('/api/overview')
+const { data: overviewData } = await useFetch("/api/overview");
 
-const stats = computed(() => overviewData.value?.stats || {
-	totalInvoices: 0,
-	totalRevenue: 0,
-	pendingAmount: 0,
-	activeClients: 0
-})
+const stats = computed(
+	() =>
+		overviewData.value?.stats || {
+			totalInvoices: 0,
+			totalRevenue: 0,
+			pendingAmount: 0,
+			activeClients: 0,
+		},
+);
 
 const invoiceStatusData = computed(() => ({
 	labels: overviewData.value?.invoicesByStatus.map((item) => item.status) || [],
@@ -101,67 +126,66 @@ const invoiceStatusData = computed(() => ({
 		{
 			data: overviewData.value?.invoicesByStatus.map((item) => item.count) || [],
 			backgroundColor: [
-				'#3B82F6', // blue - draft
-				'#F59E0B', // amber - sent
-				'#10B981', // emerald - paid
-				'#8B5CF6', // violet - partially paid
-				'#EF4444', // red - overdue
-				'#6B7280'  // gray - cancelled
+				"#3B82F6", // blue - draft
+				"#F59E0B", // amber - sent
+				"#10B981", // emerald - paid
+				"#8B5CF6", // violet - partially paid
+				"#EF4444", // red - overdue
+				"#6B7280", // gray - cancelled
 			],
-			borderWidth: 0
-		}
-	]
-}))
+			borderWidth: 0,
+		},
+	],
+}));
 
 const topClientsData = computed(() => ({
 	labels: overviewData.value?.topClients.map((item) => item.clientName) || [],
 	datasets: [
 		{
-			label: 'Total Invoiced',
+			label: "Total Invoiced",
 			data: overviewData.value?.topClients.map((item) => item.totalAmount) || [],
-			backgroundColor: '#3B82F6',
-			borderColor: '#2563EB',
-			borderWidth: 1
-		}
-	]
-}))
+			backgroundColor: "#3B82F6",
+			borderColor: "#2563EB",
+			borderWidth: 1,
+		},
+	],
+}));
 
-const chartOptions: ChartOptions<'doughnut'> = {
+const chartOptions: ChartOptions<"doughnut"> = {
 	responsive: true,
 	maintainAspectRatio: false,
 	plugins: {
 		legend: {
-			position: 'bottom'
-		}
-	}
-}
+			position: "bottom",
+		},
+	},
+};
 
-const barChartOptions: ChartOptions<'bar'> = {
+const barChartOptions: ChartOptions<"bar"> = {
 	responsive: true,
 	maintainAspectRatio: false,
 	plugins: {
 		legend: {
-			display: false
-		}
+			display: false,
+		},
 	},
 	scales: {
 		y: {
 			beginAtZero: true,
 			ticks: {
-				callback: function(value) {
-					return formatCurrency(value as number)
-				}
-			}
-		}
-	}
-}
+				callback: function (value) {
+					return formatCurrency(value as number);
+				},
+			},
+		},
+	},
+};
 
 function formatCurrency(amount: number) {
-	return new Intl.NumberFormat('en-GB', {
-		style: 'currency',
-		currency: 'GBP'
-	}).format(amount)
+	return new Intl.NumberFormat("en-GB", {
+		style: "currency",
+		currency: "GBP",
+	}).format(amount);
 }
-
-
 </script>
+

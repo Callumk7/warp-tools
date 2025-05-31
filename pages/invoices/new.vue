@@ -18,12 +18,14 @@ const formattedClients = computed(() => {
 });
 
 // Fetch projects
-const { data: projects } = await useFetch<Array<{
-	id: string;
-	name: string;
-	clientId: string;
-	client: { name: string };
-}>>("/api/projects");
+const { data: projects } = await useFetch<
+	Array<{
+		id: string;
+		name: string;
+		clientId: string;
+		client: { name: string };
+	}>
+>("/api/projects");
 
 // Filter projects based on selected client
 const filteredProjects = computed(() => {
@@ -106,8 +108,8 @@ const isSubmitting = ref(false);
 
 const onSubmit = async () => {
 	if (isSubmitting.value) return;
-	
-	const filteredItems = state.items.filter(item => item.description.trim() !== "");
+
+	const filteredItems = state.items.filter((item) => item.description.trim() !== "");
 	if (filteredItems.length === 0) {
 		alert("Please add at least one invoice item");
 		return;
@@ -124,7 +126,7 @@ const onSubmit = async () => {
 	}
 
 	isSubmitting.value = true;
-	
+
 	try {
 		const subtotalAmount = calculateTotal();
 		const taxAmount = 0; // Currently no tax
@@ -170,7 +172,7 @@ const onSubmit = async () => {
 						<template #header>
 							<div>
 								<h3 class="text-lg font-semibold">New Invoice</h3>
-								<p class="text-sm text-stone-500">Create a new invoice</p>
+								<p class="text-sm text-dimmed">Create a new invoice</p>
 							</div>
 						</template>
 						<div class="flex flex-col gap-4">
@@ -225,7 +227,11 @@ const onSubmit = async () => {
 									<DatePicker v-model="dueDate" class="w-full" />
 								</UFormField>
 							</div>
-							<UButton type="submit" :loading="isSubmitting" :disabled="isSubmitting">
+							<UButton
+								type="submit"
+								:loading="isSubmitting"
+								:disabled="isSubmitting"
+							>
 								{{ isSubmitting ? "Creating..." : "Create Invoice" }}
 							</UButton>
 						</div>
@@ -235,14 +241,14 @@ const onSubmit = async () => {
 						<template #header>
 							<div>
 								<h3 class="text-lg font-semibold">Invoice Items</h3>
-								<p class="text-sm text-stone-500">
+								<p class="text-sm text-dimmed">
 									Add the services or products you're billing for
 								</p>
 							</div>
 						</template>
 
 						<div class="space-y-4">
-							<div class="rounded-md border">
+							<div class="rounded-md border border-default">
 								<div class="grid grid-cols-12 gap-2 p-3 font-medium">
 									<div class="col-span-6">Description</div>
 									<div class="col-span-2">Quantity</div>

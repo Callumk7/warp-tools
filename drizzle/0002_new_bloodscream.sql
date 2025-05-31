@@ -1,0 +1,1 @@
+ALTER TABLE "expense" ADD COLUMN "external_invoice_id" text;

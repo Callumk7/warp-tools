@@ -1,27 +1,23 @@
 <template>
-	<UCard class="hover:bg-stone-800 transition-colors">
-		<div class="flex justify-between items-start">
-			<div class="flex flex-col gap-2">
-				<NuxtLink
-					:to="`/invoices/${props.invoiceId}`"
-					class="text-lg font-bold"
-					>{{ props.invoiceNumber }}</NuxtLink
+	<div class="flex justify-between items-start px-4 pb-4">
+		<div class="flex flex-col gap-2">
+			<NuxtLink :to="`/invoices/${props.invoiceId}`" class="text-lg font-bold">{{
+				props.invoiceNumber
+			}}</NuxtLink>
+			<div class="flex items-center gap-3">
+				<UBadge :color="getStatusColor(props.invoiceStatus)" variant="soft">
+					{{ props.invoiceStatus }}
+				</UBadge>
+				<span class="text-sm text-muted"
+					>Due: {{ formatDate(props.invoiceDueDate) }}</span
 				>
-				<div class="flex items-center gap-3">
-					<UBadge :color="getStatusColor(props.invoiceStatus)" variant="soft">
-						{{ props.invoiceStatus }}
-					</UBadge>
-					<span class="text-sm text-gray-600"
-						>Due: {{ formatDate(props.invoiceDueDate) }}</span
-					>
-				</div>
-			</div>
-			<div class="text-right">
-				<p class="text-xl font-bold">£{{ props.invoiceAmount.toFixed(2) }}</p>
-				<p class="text-sm text-gray-500">Total</p>
 			</div>
 		</div>
-	</UCard>
+		<div class="text-right">
+			<p class="text-xl font-bold">£{{ props.invoiceAmount.toFixed(2) }}</p>
+			<p class="text-sm text-muted">Total</p>
+		</div>
+	</div>
 </template>
 
 <script setup lang="ts">

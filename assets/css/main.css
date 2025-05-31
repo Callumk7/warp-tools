@@ -1,6 +1,2 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
-
-* {
-	@apply border-stone-800;
-}

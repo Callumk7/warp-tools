@@ -15,6 +15,20 @@
       "when": 1747925371942,
       "tag": "0001_tidy_the_santerians",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1748507971784,
+      "tag": "0002_new_bloodscream",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1748623403089,
+      "tag": "0003_nostalgic_amazoness",
+      "breakpoints": true
     }
   ]
 }

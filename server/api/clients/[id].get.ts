@@ -1,39 +1,36 @@
-import { db } from '../../utils/db';
-import { client } from '../../../db/schema';
-import { eq } from 'drizzle-orm';
+import { client } from "~/db/schema";
+import { eq } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
-	if (!event.context.params || !event.context.params.id) {
+	const id = event.context.params?.id;
+	if (!id) {
 		throw createError({
 			statusCode: 400,
-			message: 'Client ID is required'
+			message: "Client ID is required",
 		});
 	}
 
-  const id = event.context.params.id;
-  
-  try {
-    const clientResult = await db.query.client.findFirst({
-      where: eq(client.id, id),
-      with: {
-        projects: true
-      }
-    });
-    
-    if (!clientResult) {
-      throw createError({
-        statusCode: 404,
-        message: 'Client not found'
-      });
-    }
-    
-    return clientResult;
-  } catch (error) {
-    console.error(`Error fetching client ${id}:`, error);
-    throw createError({
-      statusCode: 500,
-      message: 'Error fetching client'
-    });
-  }
-});
+	try {
+		const clientResult = await db.query.client.findFirst({
+			where: eq(client.id, id),
+			with: {
+				projects: true,
+			},
+		});
 
+		if (!clientResult) {
+			throw createError({
+				statusCode: 404,
+				message: "Client not found",
+			});
+		}
+
+		return clientResult;
+	} catch (error) {
+		console.error(`Error fetching client ${id}:`, error);
+		throw createError({
+			statusCode: 500,
+			message: "Error fetching client",
+		});
+	}
+});
