@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { FormSubmitEvent } from "@nuxt/ui";
 import { z } from "zod";
 import { signIn } from "~/lib/auth-client";
 
@@ -17,7 +16,7 @@ const state = reactive<Partial<Schema>>({
 
 const toast = useToast();
 
-async function onSubmit(event: FormSubmitEvent<Schema>) {
+async function onSubmit() {
 	await signIn.email({
 		email: state.email!,
 		password: state.password!,
@@ -40,13 +39,12 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 		description: "The form has been submitted.",
 		color: "success",
 	});
-	console.log(event.data);
 }
 </script>
 
 <template>
 	<div class="h-screen flex justify-center items-center">
-		<div class="p-4 border rounded-md">
+		<div class="p-4 border border-muted rounded-md">
 			<UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
 				<UFormField label="Email" name="email">
 					<UInput v-model="state.email" />

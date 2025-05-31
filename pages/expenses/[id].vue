@@ -14,5 +14,5 @@ if (!expense.value) {
 </script>
 
 <template>
-	<div>{{ expense.id }}</div>
+	<div>{{ expense!.name }}</div>
 </template>

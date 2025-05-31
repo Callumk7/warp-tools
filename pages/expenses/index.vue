@@ -19,6 +19,7 @@ const { data: expenses } = await useFetch("/api/expenses");
 				<ExpenseCard
 					v-for="expense in expenses"
 					:key="expense.id"
+					:expense-name="expense.name"
 					:expenese-id="expense.id"
 					:invoice-amount="expense.amount"
 				/>

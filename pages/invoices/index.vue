@@ -13,8 +13,8 @@
 				New Invoice
 			</UButton>
 		</div>
-		<div class="py-4 rounded-md border border-muted">
-			<div class="space-y-4 divide-y divide-muted">
+		<div class="py-4 rounded-md border border-default">
+			<div class="space-y-4 divide-y divide-default">
 				<InvoiceCard
 					v-for="invoice in invoices"
 					:key="invoice.id"

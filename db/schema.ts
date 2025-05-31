@@ -157,6 +157,7 @@ export const payment = pgTable("payment", {
 // Expenses
 export const expense = pgTable("expense", {
 	id: uuid("id").primaryKey().defaultRandom(),
+	name: text("name").notNull(),
 	userId: text("user_id")
 		.notNull()
 		.references(() => user.id, { onDelete: "cascade" }),

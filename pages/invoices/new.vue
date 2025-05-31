@@ -96,10 +96,6 @@ onMounted(() => {
 	);
 });
 
-const subtotal = ref(0);
-const tax = ref(0);
-const total = ref(0);
-
 const calculateTotal = () => {
 	return state.items.reduce((sum, item) => sum + Number(item.amount), 0);
 };
@@ -228,6 +224,8 @@ const onSubmit = async () => {
 								</UFormField>
 							</div>
 							<UButton
+								class="w-fit"
+								icon="i-lucide-plus"
 								type="submit"
 								:loading="isSubmitting"
 								:disabled="isSubmitting"
@@ -260,7 +258,7 @@ const onSubmit = async () => {
 								<div
 									v-for="(item, index) in state.items"
 									:key="index"
-									class="grid grid-cols-12 gap-2 border-t p-3"
+									class="grid grid-cols-12 gap-2 border-t border-default p-3"
 								>
 									<div class="col-span-6">
 										<UInput
@@ -322,7 +320,9 @@ const onSubmit = async () => {
 								Add Item
 							</UButton>
 
-							<div class="flex justify-end space-x-4 border-t pt-4">
+							<div
+								class="flex justify-end space-x-4 border-t border-default pt-4"
+							>
 								<div class="text-right">
 									<div class="font-medium">Subtotal</div>
 									<div class="text-sm text-muted-foreground">
