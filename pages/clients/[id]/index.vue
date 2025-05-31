@@ -30,11 +30,6 @@ const breadcrumbItems = computed(() => [
 	},
 ]);
 
-const editClient = () => {
-	// Navigate to edit client page (for future functionality)
-	navigateTo(`/clients/${clientId}/edit`);
-};
-
 // Handle error and not found states
 if (!client.value) {
 	throw createError({
@@ -67,7 +62,11 @@ const onProjectCreated = () => {
 				{{ client.name }}
 			</h1>
 			<div class="flex space-x-3">
-				<UButton variant="outline" icon="i-lucide-edit" @click="editClient">
+				<UButton
+					:to="`/clients/${client.id}/edit`"
+					variant="outline"
+					icon="i-lucide-edit"
+				>
 					Edit Client
 				</UButton>
 			</div>
@@ -185,7 +184,7 @@ const onProjectCreated = () => {
 			</UCard>
 
 			<!-- Empty State -->
-			<div v-else class="text-center py-12 shadow rounded-lg">
+			<UCard v-else>
 				<div class="flex flex-col items-center">
 					<div
 						class="w-16 h-16 rounded-full flex items-center justify-center mb-4"
@@ -196,11 +195,14 @@ const onProjectCreated = () => {
 					<p class="text-muted mb-6">
 						Get started by creating an invoice for this client.
 					</p>
-					<UButton :to="`/invoices/new?clientId=${client.id}`">
+					<UButton
+						variant="outline"
+						:to="`/invoices/new?clientId=${client.id}`"
+					>
 						Create Invoice
 					</UButton>
 				</div>
-			</div>
+			</UCard>
 		</div>
 	</div>
 </template>
