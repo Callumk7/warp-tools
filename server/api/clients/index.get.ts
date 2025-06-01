@@ -1,6 +1,12 @@
-export default defineEventHandler(async () => {
+import { eq } from "drizzle-orm";
+import { client } from "~/db/schema";
+import { getUserId } from "~/server/utils/helpers";
+
+export default defineEventHandler(async (event) => {
+	const userId = getUserId(event);
 	try {
 		const clients = await db.query.client.findMany({
+			where: eq(client.userId, userId),
 			with: {
 				projects: true,
 			},

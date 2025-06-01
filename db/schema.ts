@@ -19,7 +19,7 @@ export const projectStatusEnum = pgEnum("project_status", [
 	"CANCELLED",
 	"ON_HOLD",
 ]);
-export const rateTypeEnum = pgEnum("rate_type", ["HOURLY", "FIXED"]);
+export const rateTypeEnum = pgEnum("rate_type", ["HOURLY", "FIXED", "DAILY"]);
 export const invoiceStatusEnum = pgEnum("invoice_status", [
 	"DRAFT",
 	"SENT",

@@ -7,26 +7,19 @@ import { z, ZodError } from "zod";
 const bodySchema = z.object({
 	clientId: z.string().uuid(),
 	name: z.string().min(1),
-	description: z.string().optional(),
+	description: z.string().optional().nullable(),
 	startDate: z.coerce.date().optional(),
 	endDate: z.coerce.date().optional(),
 	status: z.enum(["IN_PROGRESS", "COMPLETED", "CANCELLED", "ON_HOLD"]),
-	rateType: z.enum(["HOURLY", "FIXED"]),
-	rateAmount: z.number().optional(),
+	rateType: z.enum(["HOURLY", "FIXED", "DAILY"]),
+	rateAmount: z.number().optional().nullable(),
 	currency: z.string(),
-	notes: z.string().optional(),
+	notes: z.string().optional().nullable(),
 });
 
 export default defineEventHandler(async (event) => {
 	try {
-		// Get user from session
-		const session = await auth.api.getSession({ headers: event.headers });
-		if (!session?.user?.id) {
-			throw createError({
-				statusCode: 401,
-				message: "Unauthorized",
-			});
-		}
+		const userId = getUserId(event);
 
 		const projectId = event.context.params?.id;
 		if (!projectId) {
@@ -44,6 +37,7 @@ export default defineEventHandler(async (event) => {
 			.update(project)
 			.set({
 				...validBody,
+				userId,
 				updatedAt: new Date(),
 			})
 			.where(eq(project.id, projectId))

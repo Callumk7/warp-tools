@@ -1,11 +1,9 @@
 import { db } from "../../utils/db";
 import { client } from "../../../db/schema";
 import { z } from "zod";
-import { v4 as uuidv4 } from "uuid";
 
 // Define validation schema for incoming data
 const clientSchema = z.object({
-	id: z.string().uuid().optional(),
 	name: z.string().min(1, "Client name is required"),
 	contactPerson: z.string().optional().nullable(),
 	email: z.string().email("Invalid email address").optional().nullable(),
@@ -15,10 +13,10 @@ const clientSchema = z.object({
 	postcode: z.string().optional().nullable(),
 	country: z.string().optional().nullable(),
 	notes: z.string().optional().nullable(),
-	userId: z.string(),
 });
 
 export default defineEventHandler(async (event) => {
+	const userId = getUserId(event);
 	try {
 		// Read request body
 		const body = await readBody(event);
@@ -37,13 +35,9 @@ export default defineEventHandler(async (event) => {
 		// Extract validated data
 		const validatedData = validationResult.data;
 
-		// Generate ID if not provided
-		const clientId = validatedData.id || uuidv4();
-
 		// Prepare client data for insertion
 		const clientData = {
-			id: clientId,
-			userId: validatedData.userId,
+			userId: userId,
 			name: validatedData.name,
 			contactPerson: validatedData.contactPerson,
 			email: validatedData.email,
@@ -58,11 +52,11 @@ export default defineEventHandler(async (event) => {
 		};
 
 		// Insert client into database
-		await db.insert(client).values(clientData);
+		const newClient = await db.insert(client).values(clientData).returning();
 
 		// Return success response with the new client ID
 		return {
-			id: clientId,
+			id: newClient[0].id,
 			success: true,
 			message: "Client created successfully",
 		};

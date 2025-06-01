@@ -74,7 +74,10 @@ const activeTab = computed<string | number>({
 					:items="items"
 					class="w-fit"
 				/>
-				<ColorModeButton />
+				<div class="flex items-center gap-4">
+					<ColorModeButton />
+					<LogoutButton />
+				</div>
 			</div>
 			<div class="mt-5 ml-4">
 				<NuxtPage />

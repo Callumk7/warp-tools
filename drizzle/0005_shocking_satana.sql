@@ -1,0 +1,1 @@
+ALTER TYPE "public"."rate_type" ADD VALUE 'DAILY';

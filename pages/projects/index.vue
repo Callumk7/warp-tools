@@ -78,15 +78,13 @@ const columns: TableColumn<ProjectWithClient>[] = [
 	},
 ];
 
-// Status color mapping
-
 const formatRate = (project: Project) => {
 	if (!project.rateAmount) return "Not set";
 	const amount = new Intl.NumberFormat("en-GB", {
 		style: "currency",
 		currency: project.currency,
 	}).format(project.rateAmount);
-	return `${amount} ${project.rateType === "HOURLY" ? "/hr" : "fixed"}`;
+	return `${amount} ${project.rateType === "HOURLY" ? "/hr" : project.rateType === "DAILY" ? "/day" : "fixed"}`;
 };
 
 const formatDate = (date: string | Date) => {

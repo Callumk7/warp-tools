@@ -24,20 +24,14 @@ async function onSubmit() {
 			onSuccess() {
 				useRouter().push("/");
 			},
-			onError(context) {
+			onError() {
 				toast.add({
 					title: "Error",
-					description: context.error.message,
+					description: "Login failed, please try again.",
 					color: "warning",
 				});
 			},
 		},
-	});
-
-	toast.add({
-		title: "Success",
-		description: "The form has been submitted.",
-		color: "success",
 	});
 }
 </script>

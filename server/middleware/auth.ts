@@ -3,10 +3,7 @@ export default defineEventHandler(async (event) => {
 		// Get user from session
 		const session = await auth.api.getSession({ headers: event.headers });
 		if (!session?.user?.id) {
-			throw createError({
-				statusCode: 401,
-				message: "Unauthorized",
-			});
+			return;
 		}
 
 		event.context.auth = {

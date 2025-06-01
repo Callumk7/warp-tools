@@ -88,7 +88,7 @@ const onSubmit = async () => {
 				<UFormField label="Client" name="clientId">
 					<USelect
 						v-model="state.clientId"
-						:options="formattedClients"
+						:items="formattedClients"
 						class="w-full"
 					/>
 				</UFormField>
