@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { TableColumn } from "@nuxt/ui";
-import type { Project, Client } from "~/db/schema";
+import type { Project, Client, Invoice } from "~/db/schema";
 
 definePageMeta({
 	title: "Projects",
@@ -9,6 +9,8 @@ definePageMeta({
 // Extended Project type with client relation for the API response
 type ProjectWithClient = Project & {
 	client: Client;
+	invoices: Invoice[];
+	total: number;
 };
 
 // Data
@@ -52,9 +54,9 @@ const columns: TableColumn<ProjectWithClient>[] = [
 			),
 	},
 	{
-		accessorKey: "rate",
-		header: "Rate",
-		cell: ({ row }) => h("div", formatRate(row.original)),
+		accessorKey: "total",
+		header: "Total",
+		cell: ({ row }) => h("div", row.original.total),
 	},
 	{
 		accessorKey: "createdAt",

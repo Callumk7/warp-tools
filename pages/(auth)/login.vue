@@ -2,6 +2,10 @@
 import { z } from "zod";
 import { signIn } from "~/lib/auth-client";
 
+definePageMeta({
+	layout: false,
+});
+
 const schema = z.object({
 	email: z.string().email("Invalid email"),
 	password: z.string().min(8, "Password must be at least 8 characters"),

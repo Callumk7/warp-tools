@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
 			.insert(expense)
 			.values({ ...validBody, userId: event.context.auth.user.id })
 			.returning();
-		return newExpense;
+		return { success: true, expense: newExpense };
 	} catch (error) {
 		console.error("Error creating expense:", error);
 		throw createError({
