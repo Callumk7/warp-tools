@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://warp_user:warp_password@postgres:5432/warp_tools
+      - NODE_ENV=production
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: sh -c "pnpm db:migrate && node .output/server/index.mjs"
+
+  postgres:
+    image: postgres:14-alpine
+    environment:
+      - POSTGRES_DB=warp_tools
+      - POSTGRES_USER=warp_user
+      - POSTGRES_PASSWORD=warp_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U warp_user -d warp_tools"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
