@@ -10,9 +10,4 @@ export default defineNuxtConfig({
 			pathPrefix: false,
 		},
 	],
-	nitro: {
-		prerender: {
-			autoSubfolderIndex: false,
-		},
-	},
 });
